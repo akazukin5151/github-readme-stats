@@ -31,7 +31,7 @@ export type Lang = {
   size: number;
 };
 
-export type TopLangData = Record<string, Lang>;
+export type TopLangData = Array<Array<Lang>>;
 
 export type WakaTimeData = {
   categories: {

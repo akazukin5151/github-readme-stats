@@ -70,18 +70,16 @@ const createProgressTextNode = ({ width, color, name, progress }) => {
  *
  * @param {object[]} props Function properties.
  * @param {Lang} props.lang Programming language object.
- * @param {number} props.totalSize Total size of all languages.
  * @returns {string} Compact layout programming language SVG node.
  */
-const createCompactLangNode = ({ lang, totalSize }) => {
-  const percentage = ((lang.size / totalSize) * 100).toFixed(2);
+const createCompactLangNode = ({ lang }) => {
   const color = lang.color || "#858585";
 
   return `
     <g>
       <circle cx="5" cy="6" r="5" fill="${color}" />
       <text data-testid="lang-name" x="15" y="10" class='lang-name'>
-        ${lang.name} ${percentage}%
+        ${lang.name}
       </text>
     </g>
   `;
@@ -92,10 +90,9 @@ const createCompactLangNode = ({ lang, totalSize }) => {
  *
  * @param {object[]} props Function properties.
  * @param {Lang[]} props.langs Array of programming languages.
- * @param {number} props.totalSize Total size of all languages.
  * @returns {string} Programming languages SVG node.
  */
-const createLanguageTextNode = ({ langs, totalSize }) => {
+const createLanguageTextNode = ({ langs }) => {
   const longestLang = getLongestLang(langs);
   const chunked = chunkArray(langs, langs.length / 2);
   const layouts = chunked.map((array) => {
@@ -103,7 +100,6 @@ const createLanguageTextNode = ({ langs, totalSize }) => {
     const items = array.map((lang, index) =>
       createCompactLangNode({
         lang,
-        totalSize,
         // @ts-ignore
         index,
       }),
@@ -115,7 +111,7 @@ const createLanguageTextNode = ({ langs, totalSize }) => {
     }).join("");
   });
 
-  const percent = ((longestLang.size / totalSize) * 100).toFixed(2);
+  const percent = ((longestLang.size) * 100).toFixed(2);
   const minGap = 150;
   const maxGap = 20 + measureText(`${longestLang.name} ${percent}%`, 11);
   return flexLayout({
@@ -152,10 +148,9 @@ const renderNormalLayout = (langs, width, totalLanguageSize) => {
  *
  * @param {Lang[]} langs Array of programming languages.
  * @param {number} width Card width.
- * @param {number} totalLanguageSize Total size of all languages.
  * @returns {string} Compact layout card SVG object.
  */
-const renderCompactLayout = (langs, width, totalLanguageSize) => {
+const renderCompactLayout = (langs, width) => {
   const paddingRight = 50;
   const offsetWidth = width - paddingRight;
   // progressOffset holds the previous language's width and used to offset the next language
@@ -164,7 +159,7 @@ const renderCompactLayout = (langs, width, totalLanguageSize) => {
   const compactProgressBar = langs
     .map((lang) => {
       const percentage = parseFloat(
-        ((lang.size / totalLanguageSize) * offsetWidth).toFixed(2),
+        ((lang.size) * offsetWidth).toFixed(2),
       );
 
       const progress = percentage < 10 ? percentage + 10 : percentage;
@@ -190,13 +185,6 @@ const renderCompactLayout = (langs, width, totalLanguageSize) => {
       <rect x="0" y="0" width="${offsetWidth}" height="8" fill="white" rx="5" />
     </mask>
     ${compactProgressBar}
-
-    <g transform="translate(0, 25)">
-      ${createLanguageTextNode({
-        langs,
-        totalSize: totalLanguageSize,
-      })}
-    </g>
   `;
 };
 
@@ -207,7 +195,7 @@ const renderCompactLayout = (langs, width, totalLanguageSize) => {
  * @returns {number} Card height.
  */
 const calculateCompactLayoutHeight = (totalLangs) => {
-  return 90 + Math.round(totalLangs / 2) * 25;
+  return 90 + Math.round(totalLangs / 2) * 28;
 };
 
 /**
@@ -283,28 +271,40 @@ const renderTopLanguages = (topLangs, options = {}) => {
     translations: langCardLocales,
   });
 
-  const { langs, totalLanguageSize } = useLanguages(
-    topLangs,
-    hide,
-    String(langs_count),
-  );
+  const langs = topLangs;
 
   let width = isNaN(card_width)
     ? DEFAULT_CARD_WIDTH
     : card_width < MIN_CARD_WIDTH
     ? MIN_CARD_WIDTH
     : card_width;
-  let height = calculateNormalLayoutHeight(langs.length);
+  width = width + 50; // padding
 
-  let finalLayout = "";
-  if (layout === "compact") {
-    width = width + 50; // padding
-    height = calculateCompactLayoutHeight(langs.length);
+  let height = calculateCompactLayoutHeight(langs.length);
 
-    finalLayout = renderCompactLayout(langs, width, totalLanguageSize);
-  } else {
-    finalLayout = renderNormalLayout(langs, width, totalLanguageSize);
-  }
+  const allLangs = langs
+    .reduce((acc, curr) => curr.concat(acc, []));
+
+  let allUniqueLangs = [];
+  allLangs.forEach(lang => {
+    if (!lang.color || !lang.name) {
+      return
+    }
+    if (!allUniqueLangs.find(x => x.color === lang.color && x.name === lang.name)) {
+      allUniqueLangs.push(lang);
+    }
+  })
+
+  const legend = `
+      <g transform="translate(0, 25)">
+        ${createLanguageTextNode({
+          langs: allUniqueLangs,
+        })}
+      </g>
+    `;
+
+  const layouts = langs.map(lang => renderCompactLayout(lang, width));
+  layouts.push(legend);
 
   // returns theme based colors with proper overrides and defaults
   const colors = getCardColors({
@@ -331,11 +331,11 @@ const renderTopLanguages = (topLangs, options = {}) => {
     `.lang-name { font: 400 11px 'Segoe UI', Ubuntu, Sans-Serif; fill: ${colors.textColor} }`,
   );
 
-  return card.render(`
-    <svg data-testid="lang-items" x="${CARD_PADDING}">
-      ${finalLayout}
+  return card.render(layouts.map((layout, idx) => `
+    <svg data-testid="lang-items" x="${CARD_PADDING}" y="${idx * 10}">
+      ${layout}
     </svg>
-  `);
+  `).join('\n'));
 };
 
 export { renderTopLanguages, MIN_CARD_WIDTH };

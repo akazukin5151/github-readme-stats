@@ -22,7 +22,7 @@ const fetcher = (variables, token) => {
       query userInfo($login: String!) {
         user(login: $login) {
           # fetch only owner repos & not forks
-          repositories(ownerAffiliations: OWNER, isFork: false, first: 100) {
+          repositories(ownerAffiliations: OWNER, isFork: false, first: 100, orderBy: {field: CREATED_AT, direction: ASC}) {
             nodes {
               name
               languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
@@ -96,41 +96,19 @@ const fetchTopLanguages = async (username, exclude_repo = []) => {
     });
   }
 
-  // filter out repositories to be hidden
-  repoNodes = repoNodes
-    .sort((a, b) => b.size - a.size)
-    .filter((name) => !repoToHide[name.name]);
+  const topLangs = repoNodes
+    .filter(repo => repo.languages.edges.length !== 0)
+    .map(repo => {
+      const totalSize = repo.languages.edges
+        .map(lang => lang.size)
+        .reduce((a, b) => a + b, 0);
+      return repo.languages.edges.map(lang => ({
+        name: lang.node.name,
+        color: lang.node.color,
+        size: lang.size / totalSize
+      }));
 
-  repoNodes = repoNodes
-    .filter((node) => node.languages.edges.length > 0)
-    // flatten the list of language nodes
-    .reduce((acc, curr) => curr.languages.edges.concat(acc), [])
-    .reduce((acc, prev) => {
-      // get the size of the language (bytes)
-      let langSize = prev.size;
-
-      // if we already have the language in the accumulator
-      // & the current language name is same as previous name
-      // add the size to the language size.
-      if (acc[prev.node.name] && prev.node.name === acc[prev.node.name].name) {
-        langSize = prev.size + acc[prev.node.name].size;
-      }
-      return {
-        ...acc,
-        [prev.node.name]: {
-          name: prev.node.name,
-          color: prev.node.color,
-          size: langSize,
-        },
-      };
-    }, {});
-
-  const topLangs = Object.keys(repoNodes)
-    .sort((a, b) => repoNodes[b].size - repoNodes[a].size)
-    .reduce((result, key) => {
-      result[key] = repoNodes[key];
-      return result;
-    }, {});
+  });
 
   return topLangs;
 };
