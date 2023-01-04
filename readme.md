@@ -108,7 +108,7 @@ Change the `?username=` value to your GitHub username.
 > **Note**
 > Available ranks are S+ (top 1%), S (top 25%), A++ (top 45%), A+ (top 60%), and B+ (everyone). The values are calculated by using the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function) using commits, contributions, issues, stars, pull requests, followers, and owned repositories. The implementation can be investigated at [src/calculateRank.js](./src/calculateRank.js).
 
-### Hiding individual stats
+### Hiding individual stats (not supported in this fork)
 
 You can pass a query parameter `&hide=` to hide any specific stats with comma-separated values.
 
@@ -297,11 +297,11 @@ You can provide multiple comma-separated values in the bg_color option to render
 
 #### Language Card Exclusive Options
 
--   `hide` - Hide the languages specified from the card _(Comma-separated values)_. Default: `[] (blank array)`.
+-   ~~`hide` - Hide the languages specified from the card _(Comma-separated values)_. Default: `[] (blank array)`.~~
 -   `hide_title` - _(boolean)_. Default: `false`.
 -   `layout` - Switch between two available layouts `default` & `compact`. Default: `default`.
 -   `card_width` - Set the card's width manually _(number)_. Default `300`.
--   `langs_count` - Show more languages on the card, between 1-10 _(number)_. Default `5`.
+-   ~~`langs_count` - Show more languages on the card, between 1-10 _(number)_. Default `5`.~~
 -   `exclude_repo` - Exclude specified repositories _(Comma-separated values)_. Default: `[] (blank array)`.
 -   `custom_title` - Sets a custom title for the card _(string)_. Default `Most Used Languages`.
 
@@ -381,7 +381,7 @@ You can use `&hide=language1,language2` parameter to hide individual languages.
 [![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=anuraghazra&hide=javascript,html)](https://github.com/anuraghazra/github-readme-stats)
 ```
 
-### Show more languages
+### Show more languages (not supported in this fork)
 
 You can use the `&langs_count=` option to increase or decrease the number of languages shown on the card. Valid values are integers between 1 and 10 (inclusive), and the default is 5.
 

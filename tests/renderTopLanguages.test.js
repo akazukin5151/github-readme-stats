@@ -9,23 +9,12 @@ import "@testing-library/jest-dom";
 
 import { themes } from "../themes/index.js";
 
-const langs = {
-  HTML: {
-    color: "#0f0",
-    name: "HTML",
-    size: 200,
-  },
-  javascript: {
-    color: "#0ff",
-    name: "javascript",
-    size: 200,
-  },
-  css: {
-    color: "#ff0",
-    name: "css",
-    size: 100,
-  },
-};
+const langs = [
+  [{ name: "HTML", color: "#0f0", size: 1 }],
+  [{ name: "HTML", color: "#0f0", size: 1 }],
+  [{ name: "javascript", color: "#0ff", size: 1 }],
+  [{ name: "javascript", color: "#0ff", size: 1 }],
+];
 
 describe("Test renderTopLanguages", () => {
   it("should render correctly", () => {
@@ -36,90 +25,47 @@ describe("Test renderTopLanguages", () => {
     );
 
     expect(queryAllByTestId(document.body, "lang-name")[0]).toHaveTextContent(
-      "HTML",
-    );
-    expect(queryAllByTestId(document.body, "lang-name")[1]).toHaveTextContent(
       "javascript",
     );
-    expect(queryAllByTestId(document.body, "lang-name")[2]).toHaveTextContent(
-      "css",
+    expect(queryAllByTestId(document.body, "lang-name")[1]).toHaveTextContent(
+      "HTML",
     );
     expect(queryAllByTestId(document.body, "lang-progress")[0]).toHaveAttribute(
       "width",
-      "40%",
+      "300",
     );
     expect(queryAllByTestId(document.body, "lang-progress")[1]).toHaveAttribute(
       "width",
-      "40%",
+      "300",
     );
-    expect(queryAllByTestId(document.body, "lang-progress")[2]).toHaveAttribute(
-      "width",
-      "20%",
-    );
-  });
-
-  it("should hide languages when hide is passed", () => {
-    document.body.innerHTML = renderTopLanguages(langs, {
-      hide: ["HTML"],
-    });
-    expect(queryAllByTestId(document.body, "lang-name")[0]).toBeInTheDocument(
-      "javascript",
-    );
-    expect(queryAllByTestId(document.body, "lang-name")[1]).toBeInTheDocument(
-      "css",
-    );
-    expect(queryAllByTestId(document.body, "lang-name")[2]).not.toBeDefined();
-
-    // multiple languages passed
-    document.body.innerHTML = renderTopLanguages(langs, {
-      hide: ["HTML", "css"],
-    });
-    expect(queryAllByTestId(document.body, "lang-name")[0]).toBeInTheDocument(
-      "javascript",
-    );
-    expect(queryAllByTestId(document.body, "lang-name")[1]).not.toBeDefined();
   });
 
   it("should resize the height correctly depending on langs", () => {
     document.body.innerHTML = renderTopLanguages(langs, {});
-    expect(document.querySelector("svg")).toHaveAttribute("height", "205");
+    expect(document.querySelector("svg")).toHaveAttribute("height", "146");
 
-    document.body.innerHTML = renderTopLanguages(
-      {
-        ...langs,
-        python: {
-          color: "#ff0",
-          name: "python",
-          size: 100,
-        },
-      },
-      {},
-    );
-    expect(document.querySelector("svg")).toHaveAttribute("height", "245");
+    const l = langs.slice(0);
+    l.push([{ name: "python", color: "#ff0", size: 1 }]);
+    document.body.innerHTML = renderTopLanguages(l, {});
+    expect(document.querySelector("svg")).toHaveAttribute("height", "174");
   });
 
   it("should render with custom width set", () => {
     document.body.innerHTML = renderTopLanguages(langs, {});
 
-    expect(document.querySelector("svg")).toHaveAttribute("width", "300");
+    expect(document.querySelector("svg")).toHaveAttribute("width", "350");
 
     document.body.innerHTML = renderTopLanguages(langs, { card_width: 400 });
-    expect(document.querySelector("svg")).toHaveAttribute("width", "400");
+    expect(document.querySelector("svg")).toHaveAttribute("width", "450");
   });
 
   it("should render with min width", () => {
     document.body.innerHTML = renderTopLanguages(langs, { card_width: 190 });
 
-    expect(document.querySelector("svg")).toHaveAttribute(
-      "width",
-      MIN_CARD_WIDTH.toString(),
-    );
+    expect(document.querySelector("svg")).toHaveAttribute("width", "280");
 
     document.body.innerHTML = renderTopLanguages(langs, { card_width: 100 });
-    expect(document.querySelector("svg")).toHaveAttribute(
-      "width",
-      MIN_CARD_WIDTH.toString(),
-    );
+    expect(document.querySelector("svg")).toHaveAttribute("width", "280");
   });
 
   it("should render default colors properly", () => {
@@ -212,27 +158,19 @@ describe("Test renderTopLanguages", () => {
     );
 
     expect(queryAllByTestId(document.body, "lang-name")[0]).toHaveTextContent(
-      "HTML 40.00%",
+      "javascript",
     );
     expect(queryAllByTestId(document.body, "lang-progress")[0]).toHaveAttribute(
       "width",
-      "120",
+      "300",
     );
 
     expect(queryAllByTestId(document.body, "lang-name")[1]).toHaveTextContent(
-      "javascript 40.00%",
+      "HTML",
     );
     expect(queryAllByTestId(document.body, "lang-progress")[1]).toHaveAttribute(
       "width",
-      "120",
-    );
-
-    expect(queryAllByTestId(document.body, "lang-name")[2]).toHaveTextContent(
-      "css 20.00%",
-    );
-    expect(queryAllByTestId(document.body, "lang-progress")[2]).toHaveAttribute(
-      "width",
-      "60",
+      "300",
     );
   });
 
@@ -248,16 +186,6 @@ describe("Test renderTopLanguages", () => {
     expect(document.querySelector("rect")).toHaveAttribute("rx", "0");
     document.body.innerHTML = renderTopLanguages(langs, {});
     expect(document.querySelector("rect")).toHaveAttribute("rx", "4.5");
-  });
-
-  it("should render langs with specified langs_count", async () => {
-    const options = {
-      langs_count: 1,
-    };
-    document.body.innerHTML = renderTopLanguages(langs, { ...options });
-    expect(queryAllByTestId(document.body, "lang-name").length).toBe(
-      options.langs_count,
-    );
   });
 
   it("should render langs with specified langs_count even when hide is set", async () => {

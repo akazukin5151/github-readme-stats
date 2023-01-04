@@ -52,18 +52,12 @@ const error = {
   ],
 };
 
-const langs = {
-  HTML: {
-    color: "#0f0",
-    name: "HTML",
-    size: 250,
-  },
-  javascript: {
-    color: "#0ff",
-    name: "javascript",
-    size: 200,
-  },
-};
+const langs = [
+  [{ name: "HTML", color: "#0f0", size: 1 }],
+  [{ name: "HTML", color: "#0f0", size: 1 }],
+  [{ name: "javascript", color: "#0ff", size: 1 }],
+  [{ name: "javascript", color: "#0ff", size: 1 }],
+];
 
 const mock = new MockAdapter(axios);
 
