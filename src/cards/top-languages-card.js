@@ -95,27 +95,25 @@ const createCompactLangNode = ({ lang }) => {
 const createLanguageTextNode = ({ langs }) => {
   const longestLang = getLongestLang(langs);
   const chunked = chunkArray(langs, langs.length / 2);
-  const layouts = chunked.map((array) => {
-    // @ts-ignore
-    const items = array.map((lang, index) =>
-      createCompactLangNode({
-        lang,
-        // @ts-ignore
-        index,
-      }),
-    );
-    return flexLayout({
-      items,
-      gap: 25,
-      direction: "column",
-    }).join("");
-  });
+
+  const items = langs.map((lang, index) =>
+    createCompactLangNode({
+      lang,
+      // @ts-ignore
+      index,
+    }),
+  );
+  const layout = flexLayout({
+    items,
+    gap: 25,
+    direction: "column",
+  }).join("");
 
   const percent = (longestLang.size * 100).toFixed(2);
   const minGap = 150;
   const maxGap = 20 + measureText(`${longestLang.name} ${percent}%`, 11);
   return flexLayout({
-    items: layouts,
+    items: [layout],
     gap: maxGap < minGap ? minGap : maxGap,
   }).join("");
 };
@@ -193,7 +191,7 @@ const renderCompactLayout = (langs, width) => {
  * @returns {number} Card height.
  */
 const calculateCompactLayoutHeight = (totalLangs) => {
-  return 90 + Math.round(totalLangs / 2) * 30;
+  return 90 + Math.round(totalLangs / 2) * 19;
 };
 
 /**
@@ -271,12 +269,12 @@ const renderTopLanguages = (topLangs, options = {}) => {
 
   const langs = topLangs;
 
-  let width = isNaN(card_width)
+  let bar_width = isNaN(card_width)
     ? DEFAULT_CARD_WIDTH
     : card_width < MIN_CARD_WIDTH
     ? MIN_CARD_WIDTH
     : card_width;
-  width = width + 50; // padding
+  bar_width = bar_width + 50; // padding
 
   let height = calculateCompactLayoutHeight(langs.length);
 
@@ -299,16 +297,11 @@ const renderTopLanguages = (topLangs, options = {}) => {
 
   allUniqueLangs.sort((a, b) => b.size - a.size);
 
-  const legend = `
-      <g transform="translate(0, 25)">
-        ${createLanguageTextNode({
-          langs: allUniqueLangs,
-        })}
-      </g>
-    `;
+  const legend = createLanguageTextNode({
+    langs: allUniqueLangs,
+  });
 
-  const layouts = langs.map((lang) => renderCompactLayout(lang, width));
-  layouts.push(legend);
+  const layouts = langs.map((lang) => renderCompactLayout(lang, bar_width));
 
   // returns theme based colors with proper overrides and defaults
   const colors = getCardColors({
@@ -322,7 +315,7 @@ const renderTopLanguages = (topLangs, options = {}) => {
   const card = new Card({
     customTitle: custom_title,
     defaultTitle: i18n.t("langcard.title"),
-    width,
+    width: 480,
     height,
     border_radius,
     colors,
@@ -335,17 +328,22 @@ const renderTopLanguages = (topLangs, options = {}) => {
     `.lang-name { font: 400 11px 'Segoe UI', Ubuntu, Sans-Serif; fill: ${colors.textColor} }`,
   );
 
-  return card.render(
-    layouts
-      .map(
-        (layout, idx) => `
+  let body = layouts
+    .map(
+      (layout, idx) => `
     <svg data-testid="lang-items" x="${CARD_PADDING}" y="${idx * 10}">
       ${layout}
-    </svg>
-  `,
-      )
-      .join("\n"),
-  );
+    </svg> `,
+    )
+    .join("\n");
+
+  const legendX = CARD_PADDING + DEFAULT_CARD_WIDTH + 20;
+  body += `
+    <svg data-testid="lang-items" x="${legendX}">
+      ${legend}
+    </svg> `;
+
+  return card.render(body);
 };
 
 export { renderTopLanguages, MIN_CARD_WIDTH };

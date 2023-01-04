@@ -42,30 +42,30 @@ describe("Test renderTopLanguages", () => {
 
   it("should resize the height correctly depending on langs", () => {
     document.body.innerHTML = renderTopLanguages(langs, {});
-    expect(document.querySelector("svg")).toHaveAttribute("height", "150");
+    expect(document.querySelector("svg")).toHaveAttribute("height", "128");
 
     const l = langs.slice(0);
     l.push([{ name: "python", color: "#ff0", size: 1 }]);
     document.body.innerHTML = renderTopLanguages(l, {});
-    expect(document.querySelector("svg")).toHaveAttribute("height", "180");
+    expect(document.querySelector("svg")).toHaveAttribute("height", "147");
   });
 
   it("should render with custom width set", () => {
     document.body.innerHTML = renderTopLanguages(langs, {});
 
-    expect(document.querySelector("svg")).toHaveAttribute("width", "350");
+    expect(document.querySelector("svg")).toHaveAttribute("width", "480");
 
     document.body.innerHTML = renderTopLanguages(langs, { card_width: 400 });
-    expect(document.querySelector("svg")).toHaveAttribute("width", "450");
+    expect(document.querySelector("svg")).toHaveAttribute("width", "480");
   });
 
   it("should render with min width", () => {
     document.body.innerHTML = renderTopLanguages(langs, { card_width: 190 });
 
-    expect(document.querySelector("svg")).toHaveAttribute("width", "280");
+    expect(document.querySelector("svg")).toHaveAttribute("width", "480");
 
     document.body.innerHTML = renderTopLanguages(langs, { card_width: 100 });
-    expect(document.querySelector("svg")).toHaveAttribute("width", "280");
+    expect(document.querySelector("svg")).toHaveAttribute("width", "480");
   });
 
   it("should render default colors properly", () => {
