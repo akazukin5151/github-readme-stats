@@ -18,18 +18,6 @@ const data_langs = {
           },
           {
             languages: {
-              edges: [{ size: 100, node: { color: "#0f0", name: "HTML" } }],
-            },
-          },
-          {
-            languages: {
-              edges: [
-                { size: 100, node: { color: "#0ff", name: "javascript" } },
-              ],
-            },
-          },
-          {
-            languages: {
               edges: [
                 { size: 100, node: { color: "#0ff", name: "javascript" } },
               ],
@@ -54,8 +42,6 @@ const error = {
 
 const langs = [
   [{ name: "HTML", color: "#0f0", size: 1 }],
-  [{ name: "HTML", color: "#0f0", size: 1 }],
-  [{ name: "javascript", color: "#0ff", size: 1 }],
   [{ name: "javascript", color: "#0ff", size: 1 }],
 ];
 

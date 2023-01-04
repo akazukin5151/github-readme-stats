@@ -287,14 +287,17 @@ const renderTopLanguages = (topLangs, options = {}) => {
     if (!lang.color || !lang.name) {
       return;
     }
-    if (
-      !allUniqueLangs.find(
-        (x) => x.color === lang.color && x.name === lang.name,
-      )
-    ) {
+    const found = allUniqueLangs.find(
+      (x) => x.color === lang.color && x.name === lang.name,
+    );
+    if (found) {
+      found.size += lang.size;
+    } else {
       allUniqueLangs.push(lang);
     }
   });
+
+  allUniqueLangs.sort((a, b) => b.size - a.size);
 
   const legend = `
       <g transform="translate(0, 25)">
