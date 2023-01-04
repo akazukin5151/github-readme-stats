@@ -111,7 +111,7 @@ const createLanguageTextNode = ({ langs }) => {
     }).join("");
   });
 
-  const percent = ((longestLang.size) * 100).toFixed(2);
+  const percent = (longestLang.size * 100).toFixed(2);
   const minGap = 150;
   const maxGap = 20 + measureText(`${longestLang.name} ${percent}%`, 11);
   return flexLayout({
@@ -158,9 +158,7 @@ const renderCompactLayout = (langs, width) => {
   let progressOffset = 0;
   const compactProgressBar = langs
     .map((lang) => {
-      const percentage = parseFloat(
-        ((lang.size) * offsetWidth).toFixed(2),
-      );
+      const percentage = parseFloat((lang.size * offsetWidth).toFixed(2));
 
       const progress = percentage < 10 ? percentage + 10 : percentage;
 
@@ -195,7 +193,7 @@ const renderCompactLayout = (langs, width) => {
  * @returns {number} Card height.
  */
 const calculateCompactLayoutHeight = (totalLangs) => {
-  return 90 + Math.round(totalLangs / 2) * 28;
+  return 90 + Math.round(totalLangs / 2) * 30;
 };
 
 /**
@@ -282,18 +280,21 @@ const renderTopLanguages = (topLangs, options = {}) => {
 
   let height = calculateCompactLayoutHeight(langs.length);
 
-  const allLangs = langs
-    .reduce((acc, curr) => curr.concat(acc, []));
+  const allLangs = langs.reduce((acc, curr) => curr.concat(acc, []));
 
   let allUniqueLangs = [];
-  allLangs.forEach(lang => {
+  allLangs.forEach((lang) => {
     if (!lang.color || !lang.name) {
-      return
+      return;
     }
-    if (!allUniqueLangs.find(x => x.color === lang.color && x.name === lang.name)) {
+    if (
+      !allUniqueLangs.find(
+        (x) => x.color === lang.color && x.name === lang.name,
+      )
+    ) {
       allUniqueLangs.push(lang);
     }
-  })
+  });
 
   const legend = `
       <g transform="translate(0, 25)">
@@ -303,7 +304,7 @@ const renderTopLanguages = (topLangs, options = {}) => {
       </g>
     `;
 
-  const layouts = langs.map(lang => renderCompactLayout(lang, width));
+  const layouts = langs.map((lang) => renderCompactLayout(lang, width));
   layouts.push(legend);
 
   // returns theme based colors with proper overrides and defaults
@@ -331,11 +332,17 @@ const renderTopLanguages = (topLangs, options = {}) => {
     `.lang-name { font: 400 11px 'Segoe UI', Ubuntu, Sans-Serif; fill: ${colors.textColor} }`,
   );
 
-  return card.render(layouts.map((layout, idx) => `
+  return card.render(
+    layouts
+      .map(
+        (layout, idx) => `
     <svg data-testid="lang-items" x="${CARD_PADDING}" y="${idx * 10}">
       ${layout}
     </svg>
-  `).join('\n'));
+  `,
+      )
+      .join("\n"),
+  );
 };
 
 export { renderTopLanguages, MIN_CARD_WIDTH };

@@ -42,12 +42,12 @@ describe("Test renderTopLanguages", () => {
 
   it("should resize the height correctly depending on langs", () => {
     document.body.innerHTML = renderTopLanguages(langs, {});
-    expect(document.querySelector("svg")).toHaveAttribute("height", "146");
+    expect(document.querySelector("svg")).toHaveAttribute("height", "150");
 
     const l = langs.slice(0);
     l.push([{ name: "python", color: "#ff0", size: 1 }]);
     document.body.innerHTML = renderTopLanguages(l, {});
-    expect(document.querySelector("svg")).toHaveAttribute("height", "174");
+    expect(document.querySelector("svg")).toHaveAttribute("height", "180");
   });
 
   it("should render with custom width set", () => {
