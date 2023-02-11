@@ -149,8 +149,7 @@ const renderNormalLayout = (langs, width, totalLanguageSize) => {
  * @returns {string} Compact layout card SVG object.
  */
 const renderCompactLayout = (langs, width) => {
-  const paddingRight = 50;
-  const offsetWidth = width - paddingRight;
+  const offsetWidth = width;
   // progressOffset holds the previous language's width and used to offset the next language
   // so that we can stack them one after another, like this: [--][----][---]
   let progressOffset = 0;
@@ -274,7 +273,7 @@ const renderTopLanguages = (topLangs, options = {}) => {
     : card_width < MIN_CARD_WIDTH
     ? MIN_CARD_WIDTH
     : card_width;
-  bar_width = bar_width + 50; // padding
+  //bar_width = bar_width + 50; // padding
 
   let height = calculateCompactLayoutHeight(langs.length);
 
@@ -331,7 +330,8 @@ const renderTopLanguages = (topLangs, options = {}) => {
   let body = layouts
     .map(
       (layout, idx) => `
-    <svg data-testid="lang-items" x="${CARD_PADDING}" y="${idx * 10}">
+    <svg data-testid="lang-items" x="${CARD_PADDING}" y="${idx * 10}"
+         width="${bar_width}">
       ${layout}
     </svg> `,
     )
