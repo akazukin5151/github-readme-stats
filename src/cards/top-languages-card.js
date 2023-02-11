@@ -331,7 +331,7 @@ const renderTopLanguages = (topLangs, options = {}) => {
     .map(
       (layout, idx) => `
     <svg data-testid="lang-items" x="${CARD_PADDING}" y="${idx * 10}"
-         width="${bar_width}">
+         width="${bar_width}" height="8">
       ${layout}
     </svg> `,
     )
