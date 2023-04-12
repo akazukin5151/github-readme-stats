@@ -49,7 +49,7 @@ export default async (req, res) => {
     const cacheSeconds = clampValue(
       parseInt(cache_seconds || CONSTANTS.FOUR_HOURS, 10),
       CONSTANTS.FOUR_HOURS,
-      CONSTANTS.ONE_DAY,
+      CONSTANTS.ONE_DAY * 7,
     );
 
     res.setHeader(
