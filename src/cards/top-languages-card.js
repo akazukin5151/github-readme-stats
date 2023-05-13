@@ -146,9 +146,10 @@ const renderNormalLayout = (langs, width, totalLanguageSize) => {
  *
  * @param {Lang[]} langs Array of programming languages.
  * @param {number} width Card width.
+ * @param {string} username The username in the query
  * @returns {string} Compact layout card SVG object.
  */
-const renderCompactLayout = (langs, width) => {
+const renderCompactLayout = (langs, width, username) => {
   const offsetWidth = width;
   // progressOffset holds the previous language's width and used to offset the next language
   // so that we can stack them one after another, like this: [--][----][---]
@@ -160,15 +161,17 @@ const renderCompactLayout = (langs, width) => {
       const progress = percentage < 10 ? percentage + 10 : percentage;
 
       const output = `
-        <rect
-          mask="url(#rect-mask)"
-          data-testid="lang-progress"
-          x="${progressOffset}"
-          y="0"
-          width="${progress}"
-          height="8"
-          fill="${lang.color || "#858585"}"
-        />
+        <a href="https://github.com/${username}/${lang.repo_name}">
+          <rect
+            mask="url(#rect-mask)"
+            data-testid="lang-progress"
+            x="${progressOffset}"
+            y="0"
+            width="${progress}"
+            height="8"
+            fill="${lang.color || "#858585"}"
+          />
+        </a>
       `;
       progressOffset += percentage;
       return output;
@@ -241,9 +244,10 @@ const useLanguages = (topLangs, hide, langs_count) => {
  *
  * @param {import('../fetchers/types').TopLangData} topLangs User's most frequently used programming languages.
  * @param {Partial<import("./types").TopLangOptions>} options Card options.
+ * @param {string} username The username of the query
  * @returns {string} Language card SVG object.
  */
-const renderTopLanguages = (topLangs, options = {}) => {
+const renderTopLanguages = (topLangs, username, options = {}) => {
   const {
     hide_title = false,
     hide_border,
@@ -300,7 +304,8 @@ const renderTopLanguages = (topLangs, options = {}) => {
     langs: allUniqueLangs,
   });
 
-  const layouts = langs.map((lang) => renderCompactLayout(lang, bar_width));
+  const layouts =
+    langs.map((lang) => renderCompactLayout(lang, bar_width, username));
 
   // returns theme based colors with proper overrides and defaults
   const colors = getCardColors({

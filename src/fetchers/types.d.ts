@@ -29,6 +29,7 @@ export type Lang = {
   name: string;
   color: string;
   size: number;
+  repo_name: string;
 };
 
 export type TopLangData = Array<Array<Lang>>;

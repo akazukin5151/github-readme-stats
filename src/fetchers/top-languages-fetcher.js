@@ -105,7 +105,8 @@ const fetchTopLanguages = async (username, exclude_repo = []) => {
       return repo.languages.edges.map(lang => ({
         name: lang.node.name,
         color: lang.node.color,
-        size: lang.size / totalSize
+        size: lang.size / totalSize,
+        repo_name: repo.name
       }));
 
   });

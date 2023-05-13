@@ -60,7 +60,7 @@ export default async (req, res) => {
     );
 
     return res.send(
-      renderTopLanguages(topLangs, {
+      renderTopLanguages(topLangs, username, {
         custom_title,
         hide_title: parseBoolean(hide_title),
         hide_border: parseBoolean(hide_border),
