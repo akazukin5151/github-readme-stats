@@ -281,10 +281,8 @@ const renderTopLanguages = (topLangs, username, options = {}) => {
 
   let height = calculateCompactLayoutHeight(langs.length);
 
-  const allLangs = langs.reduce((acc, curr) => curr.concat(acc, []));
-
   let allUniqueLangs = [];
-  allLangs.forEach((lang) => {
+  langs.forEach((langs_in_repo) => langs_in_repo.forEach((lang) => {
     if (!lang.color || !lang.name) {
       return;
     }
@@ -294,9 +292,11 @@ const renderTopLanguages = (topLangs, username, options = {}) => {
     if (found) {
       found.size += lang.size;
     } else {
-      allUniqueLangs.push(lang);
+      // clone the object instead of passing in a reference,
+      // as the size will be updated later
+      allUniqueLangs.push({...lang});
     }
-  });
+  }));
 
   allUniqueLangs.sort((a, b) => b.size - a.size);
 
