@@ -101,27 +101,27 @@ class Card {
       >${this.title}</text>
     `;
 
-    const prefixIcon = `
-      <svg
-        class="icon"
+    const sourceCodeText = `
+    <a href="https://github.com/akazukin5151/github-readme-stats">
+      <text
         x="0"
-        y="-13"
-        viewBox="0 0 16 16"
-        version="1.1"
-        width="16"
-        height="16"
+        y="0"
+        class="source-code"
       >
-        ${this.titlePrefixIcon}
-      </svg>
+        Source code
+      </text>
+    </a>
     `;
+
     return `
       <g
         data-testid="card-title"
         transform="translate(${this.paddingX}, ${this.paddingY})"
       >
         ${flexLayout({
-          items: [this.titlePrefixIcon && prefixIcon, titleText],
-          gap: 25,
+          items: [titleText, sourceCodeText],
+          gap: 16,
+          direction: 'column'
         }).join("")}
       </g>
     `;
@@ -175,6 +175,17 @@ class Card {
             /* Selector detects Firefox */
             .header { font-size: 15.5px; }
           }
+
+          .source-code {
+            font: 400 11px 'Segoe UI', Ubuntu, Sans-Serif;
+            fill: ${this.colors.titleColor};
+            text-decoration: underline;
+            animation: fadeInAnimation 0.8s ease-in-out forwards;
+          }
+          @supports(-moz-appearance: auto) {
+            /* Selector detects Firefox */
+            .source-code { font-size: 11px; }
+          }
           ${this.css}
 
           ${process.env.NODE_ENV === "test" ? "" : getAnimations()}
@@ -208,7 +219,7 @@ class Card {
         <g
           data-testid="main-card-body"
           transform="translate(0, ${
-            this.hideTitle ? this.paddingX : this.paddingY + 20
+            this.hideTitle ? this.paddingX : this.paddingY + 25
           })"
         >
           ${body}
